@@ -1,85 +1,139 @@
+
+# RPG Manager API - NestJS
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <img src="https://nestjs.com/img/logo-small.svg" width="100" alt="NestJS" />
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<p align="center">Sistema de gerenciamento de Personagens e Itens Mágicos para RPG, desenvolvido com NestJS.</p>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 📄 Descrição
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+API REST para cadastro de Personagens e Itens Mágicos. Cada personagem pode possuir vários itens, com lógica de soma de atributos (força e defesa). Desenvolvido com:
 
-## Project setup
+- [NestJS](https://nestjs.com/)
+- [MongoDB](https://www.mongodb.com/) + [Mongoose](https://mongoosejs.com/)
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## ⚖️ Regras de Negócio
+
+### Personagem
+- Pode distribuir no máximo **10 pontos entre força e defesa**.
+- Pode carregar **apenas 1 amuleto**.
+- A força e defesa finais do personagem são calculadas somando os valores dos itens mágicos.
+
+### Item Mágico
+- Deve possuir pelo menos 1 ponto entre força e defesa.
+- Se tipo `ARMA`, a defesa deve ser `0`.
+- Se tipo `ARMADURA`, a força deve ser `0`.
+
+---
+
+## 🚀 Como rodar o projeto localmente
 
 ```bash
-# development
-$ npm run start
+# Instalar dependências
+npm install
 
-# watch mode
-$ npm run start:dev
+# Rodar em modo desenvolvimento
+npm run start:dev
 
-# production mode
-$ npm run start:prod
+# Rodar em produção
+npm run start:prod
 ```
 
-## Run tests
+⚠️ **É necessário ter o Docker instalado para rodar o MongoDB.**  
+Suba o container com o seguinte comando:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker run --name mongodb-rpg -p 27017:27017 -d mongo
 ```
 
-## Resources
+O projeto se conecta por padrão em:  
+`mongodb://localhost:27017/rpg`
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## ✍️ Exemplos de uso da API
 
-## Support
+### POST `/personagem/create`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Cria um personagem
 
-## Stay in touch
+```json
+{
+  "identificador": 1,
+  "nome": "Aragorn",
+  "nome_aventureiro": "Ranger do Norte",
+  "classe": "GUERREIRO",
+  "level": 10,
+  "list_itens_magicos": [],
+  "forca": 6,
+  "defesa": 4
+}
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### GET `/personagem/listAll`
+Retorna todos os personagens com atributos somados e itens populados
 
-## License
+### GET `/personagem/list/:id`
+Retorna um personagem pelo identificador com força/defesa somadas
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### PATCH `/personagem/updateNomeAventureiro/:id`
+Atualiza apenas o nome de aventureiro do personagem
+
+```json
+{
+  "nome_aventureiro": "Lorde das Sombras"
+}
+```
+
+### GET `/personagem/addItemMagico/:idPersonagem/:idItemMagico`
+Adiciona um item mágico ao personagem
+
+### DELETE `/personagem/removeItemMagico/:idPersonagem/:idItemMagico`
+Remove um item mágico do personagem
+
+### GET `/personagem/listItensMagicosByPersonagem/:id`
+Retorna a lista de itens mágicos populados do personagem
+
+### GET `/personagem/buscarAmuleto/:id`
+Retorna apenas os itens do tipo `AMULETO` do personagem
+
+### DELETE `/personagem/delete/:id`
+Remove o personagem do banco
+
+---
+
+### POST `/item-magico/create`
+
+Cria um item mágico
+
+```json
+{
+  "identificador": 101,
+  "nome": "Espada Flamejante",
+  "tipo_item": "ARMA",
+  "forca": 3,
+  "defesa": 0
+}
+```
+
+### GET `/item-magico/listAll`
+Lista todos os itens mágicos
+
+### GET `/item-magico/list/:id`
+Retorna um item mágico pelo identificador
+
+### DELETE `/item-magico/delete/:id`
+Remove um item mágico do banco
+
+---
+
+### ✨ Autor
+
+Rafael Manso Campigotto  
+RA: 22014205-2
